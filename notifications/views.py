@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 ''' Django Notifications example views '''
-from distutils.version import StrictVersion  # pylint: disable=no-name-in-module,import-error
-from django import get_version
 from django.shortcuts import get_object_or_404
 from notifications import settings
 from notifications.models import Notification
@@ -17,21 +15,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.utils.module_loading import import_string
 
-
-if StrictVersion(get_version()) >= StrictVersion('1.7.0'):
-    from django.http import JsonResponse  # noqa
-else:
-    # Django 1.6 doesn't have a proper JsonResponse
-    import json
-    from django.http import HttpResponse  # noqa
-
-    def date_handler(obj):
-        return obj.isoformat() if hasattr(obj, 'isoformat') else obj
-
-    def JsonResponse(data):  # noqa
-        return HttpResponse(
-            json.dumps(data, default=date_handler),
-            content_type="application/json")
 
 
 NotificationSerializer = import_string(settings.get_config()['SERIALIZER_CLASS'])
@@ -122,11 +105,9 @@ def live_unread_notification_list(request):
         num_to_fetch = default_num_to_fetch
 
     unread_list = []
+    notification = request.user.notifications
+    serializer = NotificationSerializer(notification, many=True)
 
-    for notification in request.user.notifications.unread()[0:num_to_fetch]:
-        serializer = NotificationSerializer(notification)
-        if request.GET.get('mark_as_read'):
-            notification.mark_as_read()
     data = {
         'unread_count': request.user.notifications.unread().count(),
         'unread_list': serializer.data
