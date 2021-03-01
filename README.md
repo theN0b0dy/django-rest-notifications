@@ -45,7 +45,7 @@ Installation is easy using ``pip`` and will install all required libraries.
 
 ::
 
-    $ pip install git+https://github.com/iamAmirrezaSaki/django-notifications.git
+    $ pip install git+https://git.pe42.ir/glist/Django_rest_notification.git
 
 
 Note that [django-model-utils](http://pypi.python.org/pypi/django-model-utils) will be installed: this is required for the pass-through QuerySet manager.
