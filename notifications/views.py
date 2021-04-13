@@ -28,6 +28,14 @@ def mark_all_as_read(request):
     return Response(status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def mark_all_as_unread(request):
+    request.user.notifications.mark_all_as_unread()
+
+    return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
