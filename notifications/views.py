@@ -1,26 +1,29 @@
 # -*- coding: utf-8 -*-
-''' Django Notifications example views '''
+""" Django Notifications example views """
 from django.shortcuts import get_object_or_404
+from django.utils.module_loading import import_string
+from django.views.decorators.cache import never_cache
+from rest_framework import status
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from notifications import settings
 from notifications.models import Notification
-from notifications.utils import id2slug, slug2id
 from notifications.settings import get_config
-from django.views.decorators.cache import never_cache
+from notifications.utils import id2slug, slug2id
 
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-
-from django.utils.module_loading import import_string
+NotificationSerializer = import_string(settings.get_config()["SERIALIZER_CLASS"])
 
 
-
-NotificationSerializer = import_string(settings.get_config()['SERIALIZER_CLASS'])
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def mark_all_as_read(request):
     request.user.notifications.mark_all_as_read()
@@ -28,45 +31,45 @@ def mark_all_as_read(request):
     return Response(status=status.HTTP_200_OK)
 
 
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def mark_as_read(request, slug=None):
     notification_id = slug2id(slug)
 
     notification = get_object_or_404(
-        Notification, recipient=request.user, id=notification_id)
+        Notification, recipient=request.user, id=notification_id
+    )
     notification.mark_as_read()
 
     return Response(status=status.HTTP_200_OK)
 
 
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def mark_as_unread(request, slug=None):
     notification_id = slug2id(slug)
 
     notification = get_object_or_404(
-        Notification, recipient=request.user, id=notification_id)
+        Notification, recipient=request.user, id=notification_id
+    )
     notification.mark_as_unread()
 
     return Response(status=status.HTTP_200_OK)
 
 
-
-@api_view(['DELETE'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["DELETE"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def delete(request, slug=None):
     notification_id = slug2id(slug)
 
     notification = get_object_or_404(
-        Notification, recipient=request.user, id=notification_id)
+        Notification, recipient=request.user, id=notification_id
+    )
 
-    if settings.get_config()['SOFT_DELETE']:
+    if settings.get_config()["SOFT_DELETE"]:
         notification.deleted = True
         notification.save()
     else:
@@ -75,29 +78,27 @@ def delete(request, slug=None):
     return Response(status=status.HTTP_200_OK)
 
 
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 @never_cache
 def live_unread_notification_count(request):
     data = {
-        'unread_count': request.user.notifications.unread().count(),
+        "unread_count": request.user.notifications.unread().count(),
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
 
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 @never_cache
 def live_unread_notification_list(request):
-    ''' Return a json with a unread notification list '''
-    default_num_to_fetch = get_config()['NUM_TO_FETCH']
+    """ Return a json with a unread notification list """
+    default_num_to_fetch = get_config()["NUM_TO_FETCH"]
     try:
         # If they don't specify, make it 5.
-        num_to_fetch = request.GET.get('max', default_num_to_fetch)
+        num_to_fetch = request.GET.get("max", default_num_to_fetch)
         num_to_fetch = int(num_to_fetch)
         if not (1 <= num_to_fetch <= 100):
             num_to_fetch = default_num_to_fetch
@@ -109,22 +110,22 @@ def live_unread_notification_list(request):
     serializer = NotificationSerializer(notification, many=True)
 
     data = {
-        'unread_count': request.user.notifications.unread().count(),
-        'unread_list': serializer.data
+        "unread_count": request.user.notifications.unread().count(),
+        "unread_list": serializer.data,
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 @never_cache
 def live_all_notification_list(request):
-    ''' Return a json with a unread notification list '''
-    default_num_to_fetch = get_config()['NUM_TO_FETCH']
+    """ Return a json with a unread notification list """
+    default_num_to_fetch = get_config()["NUM_TO_FETCH"]
     try:
         # If they don't specify, make it 5.
-        num_to_fetch = request.GET.get('max', default_num_to_fetch)
+        num_to_fetch = request.GET.get("max", default_num_to_fetch)
         num_to_fetch = int(num_to_fetch)
         if not (1 <= num_to_fetch <= 100):
             num_to_fetch = default_num_to_fetch
@@ -136,17 +137,17 @@ def live_all_notification_list(request):
     serializer = NotificationSerializer(notification, many=True)
 
     data = {
-        'all_count': request.user.notifications.count(),
-        'all_list': serializer.data
+        "all_count": request.user.notifications.count(),
+        "all_list": serializer.data,
     }
     return Response(data=data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def live_all_notification_count(request):
     data = {
-        'all_count': request.user.notifications.count(),
+        "all_count": request.user.notifications.count(),
     }
     return Response(data=data, status=status.HTTP_200_OK)
