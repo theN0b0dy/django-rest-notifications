@@ -34,8 +34,7 @@ def mark_all_as_read(request):
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def mark_as_read(request, slug=None):
-    notification_id = slug2id(slug)
+def mark_as_read(request, notification_id=None):
 
     notification = get_object_or_404(
         Notification, recipient=request.user, id=notification_id
@@ -48,8 +47,7 @@ def mark_as_read(request, slug=None):
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def mark_as_unread(request, slug=None):
-    notification_id = slug2id(slug)
+def mark_as_unread(request, notification_id=None):
 
     notification = get_object_or_404(
         Notification, recipient=request.user, id=notification_id
@@ -62,8 +60,7 @@ def mark_as_unread(request, slug=None):
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def delete(request, slug=None):
-    notification_id = slug2id(slug)
+def delete(request, notification_id=None):
 
     notification = get_object_or_404(
         Notification, recipient=request.user, id=notification_id
