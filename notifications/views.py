@@ -34,6 +34,15 @@ def mark_all_as_read(request):
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
 @permission_classes([IsAuthenticated])
+def mark_all_as_unread(request):
+    request.user.notifications.mark_all_as_unread()
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def mark_as_read(request, notification_id=None):
 
     notification = get_object_or_404(
