@@ -23,7 +23,7 @@ NotificationSerializer = import_string(settings.get_config()["SERIALIZER_CLASS"]
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def mark_all_as_read(request):
     request.user.notifications.mark_all_as_read()
@@ -32,7 +32,7 @@ def mark_all_as_read(request):
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def mark_all_as_unread(request):
     request.user.notifications.mark_all_as_unread()
@@ -41,7 +41,7 @@ def mark_all_as_unread(request):
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def mark_as_read(request, notification_id=None):
 
@@ -54,7 +54,7 @@ def mark_as_read(request, notification_id=None):
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def mark_as_unread(request, notification_id=None):
 
@@ -67,7 +67,7 @@ def mark_as_unread(request, notification_id=None):
 
 
 @api_view(["DELETE"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete(request, notification_id=None):
 
@@ -85,7 +85,7 @@ def delete(request, notification_id=None):
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @never_cache
 def live_unread_notification_count(request):
@@ -96,7 +96,7 @@ def live_unread_notification_count(request):
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @never_cache
 def live_unread_notification_list(request):
@@ -123,7 +123,7 @@ def live_unread_notification_list(request):
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @never_cache
 def live_all_notification_list(request):
@@ -150,7 +150,7 @@ def live_all_notification_list(request):
 
 
 @api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication, JWTAuthentication])
+@authentication_classes([SessionAuthentication, JWTAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def live_all_notification_count(request):
     data = {
